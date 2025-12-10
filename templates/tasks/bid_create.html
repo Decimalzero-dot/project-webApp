@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Bid on: {{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-8">
+        <h2 class="mb-4"><i class="fas fa-gavel"></i> Place Your Bid</h2>
+        <h4 class="text-primary">{{ task.title }}</h4>
+        <p class="lead text-muted">Client Budget: KSh {{ task.budget_amount|floatformat:2 }} | Due: {{ task.due_date|date:"M d, Y" }}</p>
+        <hr>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {# Amount Field #}
+                    <div class="mb-3">
+                        <label for="{{ form.amount.id_for_label }}" class="form-label">Your Bid Amount (KSh)</label>
+                        {{ form.amount|add_class:"form-control" }}
+                        <div class="form-text">What is your total price for this project?</div>
+                    </div>
+
+                    {# Delivery Days Field #}
+                    <div class="mb-3">
+                        <label for="{{ form.delivery_days.id_for_label }}" class="form-label">Estimated Delivery Time (Days)</label>
+                        {{ form.delivery_days|add_class:"form-control" }}
+                    </div>
+
+                    {# Message Field #}
+                    <div class="mb-3">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">Cover Message</label>
+                        {{ form.message|add_class:"form-control" }}
+                        <div class="form-text">Briefly explain your approach and relevant experience.</div>
+                    </div>
+
+                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg mt-3">Submit Bid</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

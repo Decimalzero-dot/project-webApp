@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Freelancer Dashboard{% endblock %}
+
+{% block content %}
+<div class="p-4 bg-dark text-white rounded shadow-sm mb-4">
+    <h1 class="display-5">Hello, {{ user.username }}!</h1>
+    <p class="lead">Your current status: <span class="badge bg-warning">{{ profile.tier }}</span></p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100 bg-success text-white">
+            <div class="card-body">
+                <i class="fas fa-money-bill-wave fa-3x mb-3"></i>
+                <h5 class="card-title">Current Balance</h5>
+                <p class="fs-2">KSh {{ current_balance|floatformat:2 }}</p>
+                <a href="{% url 'freelancers:balance' %}" class="btn btn-sm btn-light">View Financials</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">{{ completed_tasks }} Completed Tasks</h5>
+                <a href="{% url 'tasks:available_tasks_list' %}" class="btn btn-sm btn-outline-primary">Find New Work</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-user-edit fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Manage Profile</h5>
+                <p class="card-text">Update your skills, rate, and bank details.</p>
+                <a href="{% url 'freelancers:profile_update' %}" class="btn btn-sm btn-outline-info">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

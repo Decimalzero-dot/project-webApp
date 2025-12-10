@@ -1,0 +1,7 @@
+Django
+django-humanize
+django-widget-tweaks
+django-countries
+python-decouple
+cloudinary 
+dotenv

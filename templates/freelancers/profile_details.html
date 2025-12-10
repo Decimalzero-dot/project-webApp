@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile.user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        
+        <div class="col-lg-12">
+            <h1 class="mb-4">{{ profile.user.username }}'s Professional Profile</h1>
+            <p class="text-muted lead">View your details as a client would see them.</p>
+            <a href="{% url 'freelancers:profile_update' %}" class="btn btn-primary mb-4">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Professional Summary</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <h2 class="h5">Bio</h2>
+                    <p class="card-text border-bottom pb-3 mb-3">{{ profile.bio|default:"No bio provided yet." }}</p>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h2 class="h5">Hourly Rate</h2>
+                            <p class="card-text fw-bold text-success">Ksh {{ profile.hourly_rate|default:"N/A" }} / hour</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h2 class="h5">Tier Status</h2>
+                            <span class="badge bg-info text-dark">{{ profile.get_tier_display }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Skills & Expertise</h5>
+                </div>
+                <div class="card-body">
+                    {% if profile.skills.all %}
+                        {% for skill in profile.skills.all %}
+                            <span class="badge bg-success me-2 mb-2 p-2">{{ skill.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No skills added yet. Please edit your profile.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Financial Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>Account Name:</strong> {{ profile.account_name|default:"N/A" }}<br>
+                        <strong>Bank Name:</strong> {{ profile.bank_name|default:"N/A" }}<br>
+                        <strong>Account Number:</strong> {{ profile.account_number|default:"N/A" }}
+                    </p>
+                    <hr>
+                    <a href="{% url 'freelancers:balance' %}" class="btn btn-sm btn-outline-dark w-100">View Balance & Transactions</a>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                 <div class="card-body text-center">
+                    <p class="mb-2">Need to showcase your work?</p>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Manage Portfolio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

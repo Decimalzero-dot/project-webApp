@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Request Withdrawal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <h2 class="text-center mb-4"><i class="fas fa-hand-holding-usd"></i> Request Withdrawal</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <p class="alert alert-info">
+                    **Placeholder:** This form will allow you to withdraw funds to the bank account listed in your profile.
+                </p>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_amount" class="form-label">Amount to Withdraw (KSh)</label>
+                        <input type="number" id="id_amount" name="amount" class="form-control" placeholder="Minimum 1000 KSh" required>
+                    </div>
+
+                    <p class="text-muted small">
+                        Current Balance: KSh X,XXX.XX (Will be dynamic)<br>
+                        Fee: 50 KSh per transaction.
+                    </p>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg mt-3 disabled">Submit Withdrawal Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

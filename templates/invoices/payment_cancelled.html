@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Cancelled{% endblock %}
+
+{% block extra_css %}
+{# Re-include the custom split-card styles or ensure they are in base.html #}
+{% endblock extra_css %}
+
+{% block content %} 
+<div class="container text-center py-5">
+    <i class="fas fa-ban text-warning" style="font-size: 5rem;"></i>
+    <h1 class="display-4 mt-3 text-warning">Transaction Cancelled</h1>
+    <p class="lead">
+        The M-Pesa transaction was cancelled by the user.
+    </p>
+    <hr>
+    <p>
+        If you wish to proceed with the payment, you can try again below.
+    </p>
+    <a href="{% url 'invoices:checkout_initiate' %}" class="btn btn-warning btn-lg text-dark mt-3">Try Payment Again</a>
+    <a href="{% url 'accounts:login_success_redirect' %}" class="btn btn-outline-secondary btn-lg mt-3">Go to Dashboard</a>
+</div>
+{% endblock content %}

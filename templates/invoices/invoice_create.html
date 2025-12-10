@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Create Invoice{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>➕ Create New Invoice</h2>
+    <hr>
+    
+    <form method="post">
+        {% csrf_token %}
+
+        {# --- 1. Main Invoice Details --- #}
+        <div class="card mb-4">
+            <div class="card-header bg-light">Invoice Details</div>
+            <div class="card-body row">
+                {% for field in form %}
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# --- 2. Invoice Items (The Formset) --- #}
+        <div class="card mb-4">
+            <div class="card-header bg-light">Line Items</div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div id="item-form-container">
+                    {% for item_form in formset %}
+                        <div class="row item-form border-bottom pb-2 mb-2">
+                            {% for field in item_form.visible_fields %}
+                                <div class="col-md-3">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field|add_class:'form-control form-control-sm' }}
+                                </div>
+                            {% endfor %}
+                            <div class="col-md-1 d-flex align-items-center">
+                                {# Hidden fields for item deletion #}
+                                {% for field in item_form.hidden_fields %}{{ field }}{% endfor %}
+                                {% if item_form.instance.pk %}
+                                    {{ item_form.DELETE|add_class:'btn btn-danger btn-sm mt-4' }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-lg">Generate Invoice</button>
+        <a href="{% url 'invoices:invoice_list' %}" class="btn btn-secondary btn-lg">Cancel</a>
+    </form>
+</div>
+{% endblock content %}

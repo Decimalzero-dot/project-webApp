@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Waiting for Payment...{% endblock %}
+
+{% block extra_css %}
+{# Re-include the custom split-card styles or ensure they are in base.html #}
+<style>
+    /* Minimal styles for a focused waiting page */
+    .waiting-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        text-align: center;
+    }
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %} 
+<div class="waiting-container container">
+    <div class="spinner-border text-primary mb-4" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h1 class="display-5 mb-3">Awaiting M-Pesa Confirmation</h1>
+    <p class="lead mb-4">
+        A prompt has been sent to your phone. Please enter your PIN to complete the payment.
+    </p>
+    <p>
+        <small class="text-muted">Transaction ID: {{ transaction_id }}</small>
+    </p>
+
+    <div id="status-message" class="alert alert-info mt-3" role="alert">
+        Checking transaction status...
+    </div>
+
+</div> 
+{% endblock content %} 
+
+{% block extra_js %}
+<script>
+    const transactionId = "{{ transaction_id }}";
+    const statusMessage = document.getElementById('status-message');
+    const checkStatusUrl = "{% url 'invoices:check_status' transaction_id=transaction_id %}";
+    const successUrl = "{% url 'invoices:payment_success' %}";
+    const failedUrl = "{% url 'invoices:payment_failed' %}";
+    const cancelledUrl = "{% url 'invoices:payment_cancelled' %}";
+
+    function checkPaymentStatus() {
+        fetch(checkStatusUrl)
+            .then(response => {
+                // M-Pesa returns 200 for Success/Fail/Cancel, and 400 for Pending
+                return response.json();
+            })
+            .then(data => {
+                console.log('Status Check:', data.status);
+                statusMessage.textContent = data.message;
+                
+                if (data.status === 'Success') {
+                    statusMessage.classList.remove('alert-info');
+                    statusMessage.classList.add('alert-success');
+                    clearInterval(pollInterval);
+                    window.location.href = successUrl;
+                } else if (data.status === 'Failed') {
+                    statusMessage.classList.remove('alert-info');
+                    statusMessage.classList.add('alert-danger');
+                    clearInterval(pollInterval);
+                    window.location.href = failedUrl;
+                } else if (data.status === 'Cancelled') {
+                    statusMessage.classList.remove('alert-info');
+                    statusMessage.classList.add('alert-warning');
+                    clearInterval(pollInterval);
+                    window.location.href = cancelledUrl;
+                } else {
+                    // Status is Pending or 400 response for Pending/Not Found
+                    // We continue polling
+                    statusMessage.textContent = "Transaction still pending. Please check your phone for the STK prompt.";
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                statusMessage.textContent = "Error checking status. Retrying...";
+            });
+    }
+
+    // Poll every 5 seconds (5000 milliseconds)
+    const pollInterval = setInterval(checkPaymentStatus, 5000);
+
+    // Run the check immediately on load
+    checkPaymentStatus();
+</script>
+{% endblock extra_js %}

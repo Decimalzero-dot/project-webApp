@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Login - FREELANCE{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* 1. Page Centering and Styling */
+    .login-page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90vh;
+        padding: 20px 0;
+        background-color: #f8f9fa;
+        width: 100%;
+    }
+    /* 2. The Main Split Card */
+    .login-card {
+        display: flex; 
+        width: 850px; 
+        max-width: 95%; 
+        background-color: #ffffff;
+        border-radius: 15px; 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden; 
+    }
+    /* 3. Left Column: Image */
+    .login-image-column {
+        flex: 1; 
+        min-height: 450px; 
+    }
+    .login-image-column img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+        display: block;
+    }
+    /* 4. Right Column: Form */
+    .login-form-column {
+        flex: 1; 
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+    }
+    /* 5. Text & Input Styling */
+    .app-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 5px;
+    }
+    .welcome-text {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+    }
+    .form-label-uppercase {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 600;
+        color: #333;
+    }
+    .custom-input {
+        border-radius: 5px;
+        background-color: #f7f9fc !important;
+        border: 1px solid #ddd !important;
+        padding: 10px 12px !important;
+    }
+    .login-button {
+        background-color: #000000 !important;
+        color: white !important;
+        border: none;
+        padding: 12px 0;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .password-toggle {
+        float: right;
+        font-weight: 400;
+        text-transform: none;
+        font-size: 12px;
+        cursor: pointer;
+        user-select: none;
+    }
+    /* 6. Responsive adjustment for mobile */
+    @media (max-width: 768px) {
+        .login-card {
+            flex-direction: column;
+            border-radius: 10px;
+        }
+        .login-image-column {
+            display: none;
+        }
+        .login-form-column {
+            padding: 30px;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{# CRITICAL: Must override the block defined in base.html #}
+{% block content_container %} 
+<div class="container-fluid p-0">
+ <div class="login-page-container">
+    <div class="login-card shadow-lg">
+        
+        <div class="login-image-column d-none d-md-flex"> 
+            
+            <img src="{% static 'img/2118156-1200x2250-samsung-hd-tech-background-photo.webp' %}" alt="Freelancer working on a tablet">
+        </div>
+
+        <div class="login-form-column">
+            
+            <div class="logo-area text-center mb-4">
+                <h1 class="app-logo">Freelance</h1> 
+                <p class="welcome-text">Welcome, Login to your accounts!</p>
+            </div>
+            
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                {# Add non-field errors here (e.g., "Invalid Credentials") #}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mb-3" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-group mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label form-label-uppercase">
+                            {{ field.label }} 
+                            {% if field.name == 'username' %} / EMAIL ADDRESS{% endif %}
+                            
+                            {% if field.name == 'password' %}
+                                <span class="password-toggle" id="togglePassword">
+                                    <input type="checkbox" class="me-1">Show
+                                </span>
+                            {% endif %}
+                        </label>
+                        
+                        {{ field|add_class:'form-control custom-input' }}
+                        
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                
+                <button type="submit" class="login-button w-100 mt-2">LOGIN</button>
+            </form>
+            
+            <div class="login-links text-center mt-4">
+                <a href="{% url 'accounts:password_reset' %}" class="d-block mb-2">Forgot password?</a>
+                <p class="mb-0">Don't have an accounts? <a href="{% url 'accounts:register' %}" class="register-link">REGISTER NOW</a></p>
+            </div>
+            
+        </div>
+    </div>
+ </div>
+</div> 
+{% endblock content_container %}
+
+{# --- START: JavaScript for 'Show Password' Toggle --- #}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.querySelector('#togglePassword input');
+        const passwordField = document.querySelector('input[name="password"]');
+
+        if (toggle && passwordField) {
+            toggle.addEventListener('change', function() {
+                // Toggle the type attribute
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}
+{# --- END: JavaScript for 'Show Password' Toggle --- #}

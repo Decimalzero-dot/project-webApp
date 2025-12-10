@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}My Invoices{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🧾 Invoice History</h2>
+        <a href="{% url 'invoices:invoice_create' %}" class="btn btn-dark">
+            <i class="fas fa-plus"></i> Create New Invoice
+        </a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>Freelancer</th>
+                <th>Due Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.invoice_number }}</td>
+                <td>{{ invoice.client.username }}</td>
+                <td>{{ invoice.freelancer.username }}</td>
+                <td>{{ invoice.due_date|date:"M d, Y" }}</td>
+                <td>${{ invoice.total_amount }}</td>
+                <td>
+                    <span class="badge bg-{{ invoice.get_status_display|lower }}">
+                        {{ invoice.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'invoices:invoice_detail' pk=invoice.pk %}" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No invoices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

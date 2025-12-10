@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Freelance_Flow{% endblock %}</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .content {
+        flex: 1;
+      }
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'homepage' %}">
+          <i class="fas fa-file-invoice-dollar"></i> Freelance
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{% url 'accounts:login_success_redirect' %}"
+              >
+                <i class="fas fa-home"></i> Home
+              </a>
+            </li>
+
+            {% if user.is_client %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'clients:freelancer_list' %}">
+                <i class="fas fa-search"></i> Find Talent
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'tasks:client_task_list' %}">
+                <i class="fas fa-tasks"></i> My Tasks
+              </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-sm btn-info text-white me-2" href="{% url 'tasks:task_create' %}">
+                <i class="fas fa-plus"></i> Post Task
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-money-bill-wave"></i> Payments
+              </a>
+            </li>
+
+            {% elif user.is_freelancer %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'tasks:available_tasks_list' %}">
+                <i class="fas fa-briefcase"></i> Available Jobs
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'freelancers:balance' %}">
+                <i class="fas fa-wallet"></i> My Balance
+              </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'freelancers:profile_update' %}">
+                    <i class="fas fa-user-edit"></i> Profile Update
+                </a>
+            </li>
+            {% endif %}
+
+            {% endif %}
+          </ul>
+
+          <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user"></i> {{ user.username }}
+              </a>
+
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="{% if user.is_client %}{% url 'clients:dashboard' %}{% else %}{% url 'freelancers:dashboard' %}{% endif %}"
+                    >Dashboard</a
+                  >
+                </li>
+                {% if user.is_staff %}
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'admin:index' %}"
+                    >Admin Panel</a
+                  >
+                </li>
+                {% endif %}
+
+                <li><hr class="dropdown-divider" /></li>
+
+                <li>
+                  <a class="dropdown-item" href="{% url 'accounts:logout' %}"
+                    >Logout</a
+                  >
+                </li>
+                <li>
+                  <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                  {% csrf_token %}
+                    <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; border: none; background: none;">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </button>
+                  </form>
+                </li>
+                
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'accounts:register' %}"
+                >Register</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    
+    {# ------------------------------------------------------------- #}
+    {# NEW: The critical block that allows login/register to override the container #}
+    {% block content_container %}
+    <main class="content container mt-4">
+        {% block content %}
+        {# Default page content will go here if content_container is not overridden #}
+        {% endblock content %}
+    </main>
+    {% endblock content_container %}
+    {# ------------------------------------------------------------- #}
+
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">© {% now "Y" %} Freelance. All rights reserved.</span>
+        </div>
+    </footer>
+
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

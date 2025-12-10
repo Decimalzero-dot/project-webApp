@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="mb-3">{{ task.title }}</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <span class="badge bg-primary fs-6">{{ task.get_status_display }}</span>
+            <p class="mb-0 text-muted">Posted by: {{ task.client.username }}</p>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                Task Requirements
+            </div>
+            <div class="card-body">
+                <p>{{ task.description|linebreaksbr }}</p>
+                <ul class="list-unstyled mt-3">
+                    <li><i class="fas fa-clock text-info"></i> <strong>Due Date:</strong> {{ task.due_date|date:"M d, Y H:i" }}</li>
+                    <li><i class="fas fa-money-bill-wave text-success"></i> <strong>Budget:</strong> KSh {{ task.budget_amount|floatformat:2 }}</li>
+                    <li><i class="fas fa-tags text-warning"></i> <strong>Category:</strong> {{ task.category }}</li>
+                </ul>
+                <div class="mt-3">
+                    <i class="fas fa-tools text-secondary"></i> <strong>Skills Required:</strong>
+                    {% for skill in task.skills_required.all %}
+                        <span class="badge bg-secondary me-1">{{ skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        {% if is_client %}
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-sm btn-outline-secondary">Edit Task</a>
+        {% endif %}
+
+        {% if not is_client and task.status == 'OPEN' %}
+            <a href="{% url 'tasks:bid_create' pk=task.pk %}" class="btn btn-success btn-lg mt-3">
+                <i class="fas fa-gavel"></i> Place Your Bid
+            </a>
+        {% endif %}
+
+    </div>
+    
+    {% if is_client and task.status == 'OPEN' or bids %}
+    <div class="col-lg-4">
+        <h4 class="mb-3">Bids Received ({{ bids.count }})</h4>
+        <div class="list-group">
+            {% for bid in bids %}
+            <div class="list-group-item list-group-item-action {% if bid.is_accepted %}list-group-item-success{% endif %}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ bid.freelancer.user.username }}</h6>
+                    <small class="fw-bold text-success">KSh {{ bid.amount|floatformat:2 }}</small>
+                </div>
+                <p class="mb-1 small">Est. {{ bid.delivery_days }} days.</p>
+                
+                {% if is_client and not bid.is_accepted %}
+                    <a href="{% url 'tasks:accept_bid' pk=task.pk bid_pk=bid.pk %}" 
+                       class="btn btn-sm btn-primary mt-2">
+                        <i class="fas fa-check"></i> Accept Bid
+                    </a>
+                {% elif bid.is_accepted %}
+                    <span class="badge bg-success">Accepted</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

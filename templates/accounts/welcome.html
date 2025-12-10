@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Freelance Flow{% endblock %}
+
+{% block content %}
+
+<style>
+    /* 1. Container for the Full-Screen Hero */
+    .hero-container {
+        /* Set position to relative for absolute children (image/text) */
+        position: relative; 
+        /* Calculate height: 100vh minus the height of the fixed navbar and footer */
+        /* Since navbar/footer height can vary, we use a large percentage of viewport height as a starting point */
+        min-height: 85vh; 
+        width: 100vw; /* Take full viewport width */
+        margin-left: calc(-50vw + 50%); /* Crucial: Centers the content to counteract the fixed-width container from base.html */
+        margin-right: calc(-50vw + 50%);
+        overflow: hidden; /* Hide any overflow caused by the full width */
+        
+        /* 2. Hero Background Styling */
+        background-color: #000;
+        background-image: url("{% static 'img/network.webp' %}");
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* 3. Overlay for Contrast (optional, but highly recommended for text readability) */
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.65); /* Dark, semi-transparent overlay */
+    }
+
+    /* 4. Centered Text Content */
+    .hero-content {
+        position: relative; /* Keep content above the overlay (z-index) */
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100%; /* Take full height of the parent .hero-container */
+        padding: 50px 20px;
+    }
+    
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #ffffff; /* White text for contrast */
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .hero-content p {
+        font-size: 1.5rem;
+        color: #ff0000; /* Use your specific highlight color */
+        font-weight: 600;
+    }
+    .welcome-buttons a {
+        margin: 10px;
+        font-size: 1.2rem;
+        padding: 12px 30px;
+    }
+</style>
+
+<div class="hero-container">
+    <div class="hero-overlay"></div>
+    
+    <div class="hero-content">
+        
+        <div class="welcome-text mb-5">
+            <h1>FIND AND MANAGE THE BEST TALENT FOR YOUR PROJECTS.</h1>
+            <p>"A streamlined platform for clients and freelancers."</p>
+        </div>
+        
+        <div class="welcome-buttons mt-4">
+            <a href="{% url 'accounts:register' %}" class="btn btn-success btn-lg px-5">Join as a Freelancer</a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5" style="border-color: white;">Join as a Client</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

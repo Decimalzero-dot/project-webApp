@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Available Tasks{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-search"></i> Available Tasks Matching Your Skills</h2>
+<p class="lead text-muted">Browse jobs that require your registered expertise.</p>
+<hr>
+
+{% if not has_skills %}
+<div class="alert alert-warning" role="alert">
+    <strong>Action Required:</strong> You cannot view matched tasks until you update your profile and select your skills. 
+    <a href="{% url 'freelancers:profile_update' %}" class="alert-link">Update Profile Now</a>.
+</div>
+{% endif %}
+
+{% if tasks %}
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title text-success">{{ task.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ task.category }}</h6>
+                
+                <p class="card-text mt-3">
+                    <strong>Budget:</strong> <span class="fw-bold text-primary">KSh {{ task.budget_amount|floatformat:2 }}</span><br>
+                    <strong>Due Date:</strong> {{ task.due_date|date:"M d, Y" }}<br>
+                    <strong>Required Skills:</strong>
+                    {% for skill in task.skills_required.all %}
+                        <span class="badge bg-secondary">{{ skill.name }}</span>
+                    {% endfor %}
+                </p>
+                
+                <p class="text-sm mt-3">
+                    <i class="fas fa-gavel"></i> {{ task.bids.count }} Bids Placed
+                </p>
+                
+                <a href="{% url 'tasks:task_detail' pk=task.pk %}" class="btn btn-sm btn-success mt-auto">
+                    View Details & Bid
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    No open tasks currently match your registered skills. Try updating your skill set or check back later!
+</div>
+{% endif %}
+{% endblock content %}

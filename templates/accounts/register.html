@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Register - FREELANCE{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* 1. Page Centering and Styling (IDENTICAL TO LOGIN.HTML) */
+    .login-page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90vh;
+        padding: 20px 0;
+        background-color: #f8f9fa;
+        width: 100%;
+    }
+    /* 2. The Main Split Card (IDENTICAL TO LOGIN.HTML) */
+    .login-card {
+        display: flex; 
+        width: 850px; 
+        max-width: 95%; 
+        background-color: #ffffff;
+        border-radius: 15px; 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden; 
+    }
+    /* 3. Left Column: Image (IDENTICAL TO LOGIN.HTML) */
+    .login-image-column {
+        flex: 1; 
+        min-height: 450px; 
+    }
+    .login-image-column img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+        display: block;
+    }
+    /* 4. Right Column: Form (IDENTICAL TO LOGIN.HTML) */
+    .login-form-column {
+        flex: 1; 
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+    }
+    /* 5. Text & Input Styling (IDENTICAL TO LOGIN.HTML) */
+    .app-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 5px;
+    }
+    .welcome-text {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+    }
+    .form-label-uppercase {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 600;
+        color: #333;
+    }
+    .custom-input {
+        border-radius: 5px;
+        background-color: #f7f9fc !important;
+        border: 1px solid #ddd !important;
+        padding: 10px 12px !important;
+    }
+    .login-button { /* Re-used for Register button */
+        background-color: #000000 !important;
+        color: white !important;
+        border: none;
+        padding: 12px 0;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    /* Styling for the user_type radio buttons */
+    .user-type-group .form-check-label {
+        text-transform: none;
+        font-weight: normal;
+        margin-right: 15px;
+    }
+    /* 6. Responsive adjustment for mobile (IDENTICAL TO LOGIN.HTML) */
+    @media (max-width: 768px) {
+        .login-card {
+            flex-direction: column;
+            border-radius: 10px;
+        }
+        .login-image-column {
+            display: none;
+        }
+        .login-form-column {
+            padding: 30px;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{# CRITICAL: Must override the block defined in base.html #}
+{% block content_container %} 
+<div class="container-fluid p-0">
+    <div class="login-page-container">
+        <div class="login-card shadow-lg">
+            
+            <div class="login-image-column d-none d-md-flex"> 
+                <img src="{% static 'img/2118156-1200x2250-samsung-hd-tech-background-photo.webp' %}" alt="Two professionals collaborating">
+            </div>
+
+            <div class="login-form-column">
+                
+                <div class="logo-area text-center mb-4">
+                    <h1 class="app-logo">Freelance</h1> 
+                    <p class="welcome-text">Create your account to start working or hiring!</p>
+                </div>
+                
+                <form method="post" class="register-form">
+                    {% csrf_token %}
+                    
+                    {# Display non-field errors #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-3" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="form-group mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label form-label-uppercase">
+                                {{ field.label }} 
+                            </label>
+                            
+                            {% if field.name == 'user_type' %}
+                                <div class="user-type-group d-flex justify-content-start mt-2">
+                                    {% for radio in field %}
+                                        <div class="form-check me-4">
+                                            {{ radio.tag }}
+                                            <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                                {{ radio.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field|add_class:'form-control custom-input' }}
+                            {% endif %}
+                            
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="login-button w-100 mt-4">REGISTER ACCOUNT</button>
+                </form>
+                
+                <div class="login-links text-center mt-4">
+                    <p class="mb-0">Already have an account? <a href="{% url 'accounts:login' %}" class="register-link">LOG IN HERE</a></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock content_container %}

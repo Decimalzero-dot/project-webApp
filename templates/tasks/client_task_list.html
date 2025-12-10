@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}My Posted Tasks{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-list-alt"></i> Tasks I Have Posted</h2>
+<p class="lead text-muted">Manage the tasks you have posted for freelancers.</p>
+<hr>
+
+<a href="{% url 'tasks:task_create' %}" class="btn btn-primary mb-4"><i class="fas fa-plus-circle"></i> Post New Task</a>
+
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title text-primary">{{ task.title }}</h5>
+                    <span class="badge bg-{{ task.status|lower|default:'secondary' }}">
+                        {{ task.get_status_display }}
+                    </span>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">{{ task.category }}</h6>
+                
+                <p class="card-text">
+                    <strong>Budget:</strong> KSh {{ task.budget_amount|floatformat:2 }}<br>
+                    <strong>Due Date:</strong> {{ task.due_date|date:"M d, Y" }}
+                </p>
+
+                <div class="mt-auto">
+                    <p class="text-sm">
+                        <i class="fas fa-gavel"></i> {{ task.bids.count }} Bids
+                    </p>
+                    <a href="{% url 'tasks:task_detail' pk=task.pk %}" class="btn btn-sm btn-outline-info">
+                        View Details & Bids
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info" role="alert">
+            You haven't posted any tasks yet. Start a new project!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

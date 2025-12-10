@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Post New Task{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-8">
+        <h2 class="mb-4"><i class="fas fa-bullhorn"></i> Post a New Task</h2>
+        <p class="lead text-muted">Clearly describe your requirements to attract the best talent.</p>
+        <hr>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <fieldset class="p-4 mb-4 border rounded shadow-sm">
+                <legend class="float-none w-auto px-2 fs-5 text-primary">Job Details</legend>
+                
+                {# Iterate over non-ManyToMany fields first #}
+                {% for field in form %}
+                    {# Skip the skills_required field for a separate display #}
+                    {% if field.name != 'skills_required' %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                                <div class="form-check">
+                                    {{ field|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
+                            {% elif field.field.widget.input_type == 'select' %}
+                                {{ field|add_class:"form-select" }}
+                            {% else %}
+                                {{ field|add_class:"form-control" }}
+                            {% endif %}
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+
+            <fieldset class="p-4 mb-4 border rounded shadow-sm">
+                <legend class="float-none w-auto px-2 fs-5 text-primary">Required Skills</legend>
+                
+                <label class="form-label">{{ form.skills_required.label }}</label>
+                <div class="row">
+                    {% for choice in form.skills_required %}
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                {{ choice.tag|add_class:"form-check-input" }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% for error in form.skills_required.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                <div class="form-text">{{ form.skills_required.help_text }}</div>
+            </fieldset>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success btn-lg mt-3">Post Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

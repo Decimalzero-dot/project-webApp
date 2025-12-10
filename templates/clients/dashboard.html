@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Dashboard{% endblock %}
+
+{% block content %}
+<div class="p-4 bg-light rounded shadow-sm mb-4">
+    <h1 class="display-5">Welcome back, {{ user.username }}!</h1>
+    <p class="lead text-muted">Manage your tasks, payments, and freelancers from here.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">{{ active_tasks }} Active Tasks</h5>
+                <a href="#" class="btn btn-sm btn-outline-primary">View Tasks</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-search fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Find Talent</h5>
+                <p class="card-text">Discover the right freelancers for your next project.</p>
+                <a href="{% url 'clients:freelancer_list' %}" class="btn btn-sm btn-info text-white">Browse Freelancers</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-credit-card fa-3x text-success mb-3"></i>
+                <h5 class="card-title">{{ pending_payments }} Pending Payments</h5>
+                <p class="card-text">Tasks awaiting your M-Pesa payment confirmation.</p>
+                <a href="#" class="btn btn-sm btn-outline-success">Review Payments</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
