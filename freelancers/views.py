@@ -92,26 +92,30 @@ def profile_update_view(request):
     return render(request, 'freelancers/profile_update.html', context)
 
 
-@login_required
+@freelancer_required
 def profile_update_view(request):
-    # 1. Get the instance to populate the form
-    instance = request.user.freelancerprofile
+    try:
+        profile = request.user.freelancerprofile
+    except FreelancerProfile.DoesNotExist:
+        profile = FreelancerProfile(user=request.user)
 
     if request.method == 'POST':
-        # 2. For POST, instantiate the form with data and instance
-        form = FreelancerProfileForm(request.POST, request.FILES, instance=instance)
-        
-        # 3. Validation is only done on POST
+        form = FreelancerProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('profile-detail') # or whatever your success URL is
+            messages.success(request, 'Profile updated successfully!')
+            # Redirect to dashboard or detail page
+            return redirect('freelancers:dashboard')  
+    else:
+        form = FreelancerProfileForm(instance=profile)
 
-    else: # This handles the initial GET request
-        # 4. For GET, instantiate the form with just the instance, for rendering
-        form = FreelancerProfileForm(instance=instance)
+    context = {
+        'title': 'Update Profile',
+        'form': form,
+    }
+    return render(request, 'freelancers/profile_update.html', context)
+    return redirect('freelancers:profile_detail', username=request.user.username)
 
-    # 5. Render the page using the context, which includes the 'form' variable
-    return render(request, 'freelancers/profile_update.html', {'form': form})
 
 @freelancer_required
 def balance_view(request):

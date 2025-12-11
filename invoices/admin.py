@@ -10,19 +10,19 @@ class TransactionsAdmin(admin.ModelAdmin):
     list_display = ('transaction_id', 'phone_number', 'amount','status','date_created','mpesa_receipt_number')
     list_filter = ('status', 'date_created','transaction_id')
     search_fields = ('transaction_id', 'phone_number', 'amount','status','date_created','mpesa_receipt_number')
-
+    
+    def formatted_amount(self, obj):
+        return f"Ksh {obj.amount:,.2f}"
+    formatted_amount.short_description = "Amount"
 # -----------------------------------------------
 # Inline for Invoice Items (Line Items)
 # -----------------------------------------------
+
 class InvoiceItemInline(admin.TabularInline):
     model = InvoiceItem
-    # Define the fields shown for each line item in the Invoice Admin page
     fields = ('description', 'quantity', 'unit_price', 'total_price')
-    # total_price is calculated in the model's save method, so we make it read-only
-    readonly_fields = ('total_price',) 
-    # Allow 1 blank item to be added by default
-    extra = 1 
-
+    readonly_fields = ('total_price',)
+    extra = 2
 
 # -----------------------------------------------
 # Main Invoice Admin
@@ -51,3 +51,4 @@ class InvoiceAdmin(admin.ModelAdmin):
             'readonly_fields': ('subtotal', 'total_amount'),
         }),
     )
+    

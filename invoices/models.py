@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from decimal import Decimal
 from tasks.models import Task # CRITICAL: Imports the Task model from the tasks app
 
 # Access the Custom User model

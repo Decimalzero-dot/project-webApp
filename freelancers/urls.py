@@ -10,7 +10,7 @@ urlpatterns = [
     
     # Profile CRUD
     path('profile/update/', views.profile_update_view, name='profile_update'),
-    path('profile/<str:username>/', views.profile_detail_view, name='profile_detail'),
+    path('profile/<str:username>/', views.profile_update_view, name='profile_detail'),
     
     # Financial Views
     path('balance/', views.balance_view, name='balance'),
